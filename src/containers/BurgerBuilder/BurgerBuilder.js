@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Aux from "../../hoc/Aux";
 import Burger from "../../components/Burger/Burger";
 import BuildControl from "../../components/Burger/BuildControls/BuildControls";
+import Modal from "../../components/UI/Modal/Modal";
+import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -18,14 +20,21 @@ class BurgerBuilder extends Component {
       bacon: 0
     },
     totalPrice: 4,
-    purchasable: false
+    purchasable: false,
+    purchasing: false
   };
 
-  updatePurchaseState = (ingredients) => {
+  purchaseHandler = () => {
+    this.setState({
+      purchasing: true
+    });
+  };
+
+  updatePurchaseState = ingredients => {
     // const ingredients = {
     //   ...this.state.ingredients
-    // }; 
-    // The above doesn't work as when we invoke setstate in the 
+    // };
+    // The above doesn't work as when we invoke setstate in the
     // handler we receive the old state and not the updated one
     ///
 
@@ -37,7 +46,7 @@ class BurgerBuilder extends Component {
         return sum + el;
       }, 0);
 
-      this.setState({purchasable: sum > 0});
+    this.setState({ purchasable: sum > 0 });
   };
 
   addIngredientHandler = type => {
@@ -53,7 +62,6 @@ class BurgerBuilder extends Component {
     const newPrice = oldPrice + priceAddition;
     this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
     this.updatePurchaseState(updatedIngredients); // we pass ingredients here to avoid passing an old state in the purchase method
-    
   };
 
   removeIngredientHandler = type => {
@@ -70,7 +78,6 @@ class BurgerBuilder extends Component {
       const newPrice = oldPrice - priceDeduction;
       this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
       this.updatePurchaseState(updatedIngredients); // we pass ingredients here to avoid passing an old state in the purchase method
-      
     }
   };
 
@@ -83,10 +90,14 @@ class BurgerBuilder extends Component {
     }
     return (
       <Aux>
+        <Modal show={this.state.purchasing}>
+          <OrderSummary ingredients={this.state.ingredients} />
+        </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControl
           disabled={disabledInfo}
           purchasable={this.state.purchasable}
+          ordered={this.purchaseHandler}
           price={this.state.totalPrice}
           ingredientAdded={this.addIngredientHandler}
           ingredientRemoved={this.removeIngredientHandler}
