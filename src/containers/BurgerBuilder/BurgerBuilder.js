@@ -17,7 +17,27 @@ class BurgerBuilder extends Component {
       meat: 0,
       bacon: 0
     },
-    totalPrice: 4
+    totalPrice: 4,
+    purchasable: false
+  };
+
+  updatePurchaseState = (ingredients) => {
+    // const ingredients = {
+    //   ...this.state.ingredients
+    // }; 
+    // The above doesn't work as when we invoke setstate in the 
+    // handler we receive the old state and not the updated one
+    ///
+
+    const sum = Object.keys(ingredients)
+      .map(key => {
+        return ingredients[key];
+      })
+      .reduce((sum, el) => {
+        return sum + el;
+      }, 0);
+
+      this.setState({purchasable: sum > 0});
   };
 
   addIngredientHandler = type => {
@@ -32,6 +52,8 @@ class BurgerBuilder extends Component {
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice + priceAddition;
     this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    this.updatePurchaseState(updatedIngredients); // we pass ingredients here to avoid passing an old state in the purchase method
+    
   };
 
   removeIngredientHandler = type => {
@@ -47,6 +69,8 @@ class BurgerBuilder extends Component {
       const oldPrice = this.state.totalPrice;
       const newPrice = oldPrice - priceDeduction;
       this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+      this.updatePurchaseState(updatedIngredients); // we pass ingredients here to avoid passing an old state in the purchase method
+      
     }
   };
 
@@ -62,6 +86,7 @@ class BurgerBuilder extends Component {
         <Burger ingredients={this.state.ingredients} />
         <BuildControl
           disabled={disabledInfo}
+          purchasable={this.state.purchasable}
           price={this.state.totalPrice}
           ingredientAdded={this.addIngredientHandler}
           ingredientRemoved={this.removeIngredientHandler}
