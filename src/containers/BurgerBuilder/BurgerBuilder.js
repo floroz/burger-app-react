@@ -44,26 +44,41 @@ class BurgerBuilder extends Component {
   };
 
   purchaseContinueHandler = () => {
-    this.setState({ loading: true });
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: "Daniele",
-        address: {
-          street: "TestStreet",
-          zipCode: "E32hn",
-          country: "United Kingdom"
-        },
-        email: "test@test.com"
-      },
-      deliveryMethod: "fastest"
-    };
+    // this.setState({ loading: true });
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: "Daniele",
+    //     address: {
+    //       street: "TestStreet",
+    //       zipCode: "E32hn",
+    //       country: "United Kingdom"
+    //     },
+    //     email: "test@test.com"
+    //   },
+    //   deliveryMethod: "fastest"
+    // };
+    // axios
+    //   .post("/orders.json", order)
+    //   .then(this.setState({ loading: false, purchasing: false }))
+    //   .catch(this.setState({ loading: false, purchasing: false }));
 
-    axios
-      .post("/orders.json", order)
-      .then(this.setState({ loading: false, purchasing: false }))
-      .catch(this.setState({ loading: false, purchasing: false }));
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) +
+          "=" +
+          encodeURIComponent(this.state.ingredients[i])
+      );
+    }
+
+    const queryString = queryParams.join("&");
+
+    this.props.history.push({
+      pathname: "/checkout",
+      search: "?" + queryString
+    });
   };
 
   updatePurchaseState = ingredients => {
@@ -161,7 +176,7 @@ class BurgerBuilder extends Component {
           show={this.state.purchasing}
           modalClosed={this.purchaseCancelHandler}
         >
-        {orderSummary}
+          {orderSummary}
         </Modal>
         {this.state.ingredients ? burger : <Spinner />}
       </Aux>
