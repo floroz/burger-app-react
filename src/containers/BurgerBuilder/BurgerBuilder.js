@@ -5,7 +5,6 @@ import Burger from "../../components/Burger/Burger";
 import BuildControl from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
-import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import axiosInstance from "../../axios-orders";
@@ -13,9 +12,9 @@ import * as actionTypes from "../../store/actions";
 
 class BurgerBuilder extends Component {
   state = {
-    purchasable: false,
     purchasing: false,
-    loading: false
+    loading: false,
+    error: false
   };
 
   componentDidMount() {
@@ -34,24 +33,7 @@ class BurgerBuilder extends Component {
   };
 
   purchaseCancelHandler = () => {
-    this.setState({ purchasing: false });
-  };
-
-  purchaseContinueHandler = () => {
-    const queryParams = [];
-    for (let i in this.props.ing) {
-      queryParams.push(
-        encodeURIComponent(i) + "=" + encodeURIComponent(this.props.ing[i])
-      );
-    }
-    queryParams.push("price=" + this.state.totalPrice);
-
-    const queryString = queryParams.join("&");
-
-    this.props.history.push({
-      pathname: "/checkout",
-      search: "?" + queryString
-    });
+    this.props.history.push("/checkout");
   };
 
   updatePurchaseState = ingredients => {
@@ -70,7 +52,7 @@ class BurgerBuilder extends Component {
         return sum + el;
       }, 0);
 
-    this.setState({ purchasable: sum > 0 });
+    return sum > 0;
   };
 
   render() {
@@ -93,7 +75,7 @@ class BurgerBuilder extends Component {
           <Burger ingredients={this.props.ing} />
           <BuildControl
             disabled={disabledInfo}
-            purchasable={this.state.purchasable}
+            purchasable={this.updatePurchaseState(this.props.ing)}
             ordered={this.purchaseHandler}
             price={this.props.price}
             ingredientAdded={this.props.addIngredient}
