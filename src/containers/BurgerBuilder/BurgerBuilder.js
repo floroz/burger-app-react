@@ -8,22 +8,15 @@ import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import axiosInstance from "../../axios-orders";
-import * as actionTypes from "../../store/actions";
+import * as burgerBuilderActions from "../../store/actions/index";
 
 class BurgerBuilder extends Component {
   state = {
-    purchasing: false,
-    loading: false,
-    error: false
+    purchasing: false
   };
 
   componentDidMount() {
-    // axios
-    //   .get("https://burger-react-app-da224.firebaseio.com/ingredients.json")
-    //   .then(res => {
-    //     this.setState({ ingredients: res.data });
-    //   })
-    //   .catch(err => console.log(err));
+    this.props.initIngredients();
   }
 
   purchaseHandler = () => {
@@ -37,13 +30,6 @@ class BurgerBuilder extends Component {
   };
 
   updatePurchaseState = ingredients => {
-    // const ingredients = {
-    //   ...this.state.ingredients
-    // };
-    // The above doesn't work as when we invoke setstate in the
-    // handler we receive the old state and not the updated one
-    ///
-
     const sum = Object.keys(ingredients)
       .map(key => {
         return ingredients[key];
@@ -110,16 +96,18 @@ class BurgerBuilder extends Component {
 const mapStateToProps = state => {
   return {
     ing: state.ingredients,
-    price: state.totalPrice
+    price: state.totalPrice,
+    error: state.error
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     addIngredient: ingNam =>
-      dispatch({ type: actionTypes.ADD_INGREDIENT, ingredientName: ingNam }),
+      dispatch(burgerBuilderActions.addIngredient(ingNam)),
     removeIngredient: ingNam =>
-      dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingNam })
+      dispatch(burgerBuilderActions.removeIngredient(ingNam)),
+    initIngredients: () => dispatch(burgerBuilderActions.initIngredients())
   };
 };
 
