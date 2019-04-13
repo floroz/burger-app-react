@@ -7,7 +7,6 @@ import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import withErrorHandler from "../../../hoc/withErrorHandler/withErrorHandler";
 import * as actions from "../../../store/actions/index";
-import { stat } from "fs";
 
 export class ContactData extends Component {
   state = {
