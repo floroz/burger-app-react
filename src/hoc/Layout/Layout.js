@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import Aux from "../Aux/Aux";
 import classes from "./Layout.css";
 import Toolbar from "../../components/Navigation/Toolbar/Toolbar";
@@ -11,9 +12,9 @@ class Layout extends Component {
 
   // use setState with prevState as best practice when you need access to the previous state
   sideDrawerToggleHandler = () => {
-    this.setState((prevState) => {
-      return {showSideDrawer: !prevState.showSideDrawer}
-    })
+    this.setState(prevState => {
+      return { showSideDrawer: !prevState.showSideDrawer };
+    });
   };
 
   sideDrawerClosedHandler = () => {
@@ -23,15 +24,24 @@ class Layout extends Component {
   render() {
     return (
       <Aux>
-        <Toolbar drawerToggle={this.sideDrawerToggleHandler} />
+        <Toolbar
+          drawerToggle={this.sideDrawerToggleHandler}
+          isAuth={this.props.isAuth}
+        />
         <SideDrawer
           closed={this.sideDrawerClosedHandler}
           open={this.state.showSideDrawer}
+          isAuth={this.props.isAuth}
         />
         <main className={classes.Content}>{this.props.children}</main>
       </Aux>
     );
   }
 }
+const mapStateToProps = state => {
+  return {
+    isAuth: state.auth.token !== null
+  };
+};
 
-export default Layout;
+export default connect(mapStateToProps)(Layout);
