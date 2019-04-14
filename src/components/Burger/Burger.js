@@ -13,7 +13,6 @@ const burger = props => {
     .filter(singleIngredientArray => {
       return singleIngredientArray.length > 0;
     });
-  // console.log(transformedIngredients) // for testing purposes
   if (transformedIngredients.length === 0) {
     transformedIngredients = <p>Please start adding ingredients!</p>;
   }

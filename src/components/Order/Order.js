@@ -3,7 +3,6 @@ import classes from "./Order.css";
 
 const order = props => {
   const ingredients = [];
-  console.log(ingredients);
 
   for (let key in props.ingredients) {
     let quantity = props.ingredients[key];
